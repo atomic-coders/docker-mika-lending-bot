@@ -9,4 +9,4 @@ error.log
 *.sqlite3
 
 docs
-market_data
+logs
