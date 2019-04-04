@@ -30,7 +30,7 @@ class Bitfinex(ExchangeApi):
         self.symbols = []
         self.ticker = {}
         self.tickerTime = 0
-	self.baseCurrencies = ['USD', 'BTC', 'ETH']
+        self.baseCurrencies = ['USD', 'BTC', 'ETH']
         self.all_currencies = self.cfg.get_all_currencies()
         self.usedCurrencies = []
         self.timeout = int(self.cfg.get("BOT", "timeout", 30, 1, 180))
@@ -100,8 +100,9 @@ class Bitfinex(ExchangeApi):
 
     @ExchangeApi.synchronized
     def _post(self, command, payload=None, verify=True):
-        # keep the request per minute limit
-        self.limit_request_rate()
+        # keep the request per minute limit, only if it's not an offer-command
+        if not command.startswith('offer/') :
+            self.limit_request_rate()
 
         payload = payload or {}
         payload['request'] = '/{}/{}'.format(self.apiVersion, command)
