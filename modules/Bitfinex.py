@@ -21,6 +21,7 @@ class Bitfinex(ExchangeApi):
         self.lock = threading.RLock()
         self.req_per_period = 1
         self.default_req_period = 5000  # milliseconds, 1000 = 60/min
+        self.default_min_req_period = 700 # milliseconds ~85 req/min
         self.req_period = self.default_req_period
         self.req_time_log = RingBuffer(self.req_per_period)
         self.url = 'https://api.bitfinex.com'
@@ -100,9 +101,13 @@ class Bitfinex(ExchangeApi):
 
     @ExchangeApi.synchronized
     def _post(self, command, payload=None, verify=True):
-        # keep the request per minute limit, only if it's not an offer-command
-        if not command.startswith('offer/') :
-            self.limit_request_rate()
+        # if the req_period has been manipulated from outside (rate limited), do not change it here.
+        if self.req_period == self.default_min_req_period or self.req_period == self.default_req_period:
+            # keep the request per minute limit, only if it's not an offer-command
+            if command.startswith('offer/'):
+                self.req_period = self.default_min_req_period   # use the fasted possible rate (~90 / min)
+            else:
+                self.req_period = self.default_req_period       # rate with the standard rate (12 / min)
 
         payload = payload or {}
         payload['request'] = '/{}/{}'.format(self.apiVersion, command)
