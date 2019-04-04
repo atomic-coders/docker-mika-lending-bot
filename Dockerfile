@@ -12,4 +12,4 @@ RUN touch www/botlog.json
 
 EXPOSE 8000
 
-CMD ["python", "lendingbot.py", "-cfg", "/usr/src/app/default.cfg"]
+CMD ["python", "-u", "lendingbot.py", "-cfg", "/usr/src/app/default.cfg"]
