@@ -12,6 +12,7 @@ Analysis = None
 
 SATOSHI = Decimal(10) ** -8
 
+cancel_at_round_turn = 0
 sleep_time_active = 0
 sleep_time_inactive = 0
 sleep_time = 0
@@ -46,6 +47,7 @@ frrdelta = 0.0
 loanOrdersRequestLimit = {}
 defaultLoanOrdersRequestLimit = 400
 increaseLoanOrdersRequestLimit = 100
+currentCancelRoundTurn = 0
 
 
 def init(cfg, api1, log1, data, maxtolend, dry_run1, analysis, notify_conf1):
@@ -58,13 +60,14 @@ def init(cfg, api1, log1, data, maxtolend, dry_run1, analysis, notify_conf1):
     Analysis = analysis
     notify_conf = notify_conf1
 
-    global sleep_time, sleep_time_active, sleep_time_inactive, min_daily_rate, max_daily_rate, spread_lend, \
+    global sleep_time, cancel_at_round_turn, sleep_time_active, sleep_time_inactive, min_daily_rate, max_daily_rate, spread_lend, \
         gap_bottom_default, gap_top_default, xday_threshold, xday_spread, xdays, min_loan_size, end_date, coin_cfg, \
         min_loan_sizes, dry_run, transferable_currencies, keep_stuck_orders, hide_coins, scheduler, gap_mode_default, \
         exchange, analysis_method, currencies_to_analyse, all_currencies, frrasmin, frrdelta
 
     exchange = Config.get_exchange()
 
+    cancel_at_round_turn = float(Config.get("BOT", "cancelatroundturn", None, 1, 3600))
     sleep_time_active = float(Config.get("BOT", "sleeptimeactive", None, 1, 3600))
     sleep_time_inactive = float(Config.get("BOT", "sleeptimeinactive", None, 1, 3600))
     exchangeMax = 7 if exchange == 'BITFINEX' else 5
@@ -238,7 +241,11 @@ def lend_all():
                 ticker = api.return_ticker()
             break
 
-    cancel_all()
+    global currentCancelRoundTurn
+    currentCancelRoundTurn = currentCancelRoundTurn + 1
+    if currentCancelRoundTurn > cancel_at_round_turn:
+        cancel_all()
+        currentCancelRoundTurn = 1
 
     total_lent = Data.get_total_lent()[0]
     lending_balances = api.return_available_account_balances("lending")['lending']
