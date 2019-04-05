@@ -36,8 +36,6 @@ class Bitfinex(ExchangeApi):
         self.usedCurrencies = []
         self.timeout = int(self.cfg.get("BOT", "timeout", 30, 1, 180))
         self.api_debug_log = self.cfg.getboolean("BOT", "api_debug_log")
-        self.loanOrdersTime = []
-        self.loanOrders = []
         # Initialize usedCurrencies
         _ = self.return_available_account_balances("lending")
 
@@ -157,18 +155,10 @@ class Bitfinex(ExchangeApi):
         return resp
 
     def return_loan_orders(self, currency, limit=0):
-        t = int(time.time())
-        if t - self.loanOrdersTime[currency] < 30:   # a new loan orders only all 30 secs
-            return self.loanOrders[currency]
-
         command = ('lendbook/' + currency + '?limit_asks=' + str(limit) + '&limit_bids=' + str(limit))
         bfx_resp = self._get(command)
         resp = Bitfinex2Poloniex.convertLoanOrders(bfx_resp)
-
-        self.loanOrdersTime[currency] = t
-        self.loanOrders[currency] = resp
-
-        return self.loanOrders[currency]
+        return resp
 
     def return_active_loans(self):
         """
