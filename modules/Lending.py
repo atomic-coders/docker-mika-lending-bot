@@ -248,6 +248,7 @@ def lend_all():
                 ticker = api.return_ticker()
             break
     try:
+        cancel_all()
         for cur in lending_balances:
             if cur in all_currencies:
                 usable_currencies += lend_cur(cur, total_lent, lending_balances, ticker)

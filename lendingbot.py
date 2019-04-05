@@ -110,7 +110,7 @@ try:
             Data.update_conversion_rates(output_currency, json_output_enabled)
             PluginsManager.before_lending()
             Lending.transfer_balances()
-            Lending.cancel_all()
+# is now done in lend_all after getting the tickers to avoid longs time not in the market..            Lending.cancel_all()
             Lending.lend_all()
             PluginsManager.after_lending()
             log.refreshStatus(Data.stringify_total_lent(*Data.get_total_lent()),
