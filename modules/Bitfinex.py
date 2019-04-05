@@ -123,6 +123,9 @@ class Bitfinex(ExchangeApi):
     @ExchangeApi.synchronized
     def _get(self, command, apiVersion=None):
         # keep the request per minute limit
+        if self.req_period == self.default_min_req_period or self.req_period == self.default_req_period:
+            self.req_period = self.default_req_period # rate with the standard rate (12 / min)
+
         self.limit_request_rate()
         self.log.log_error('Calling bfx api get {}'.format(command))
 
