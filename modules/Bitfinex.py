@@ -109,6 +109,8 @@ class Bitfinex(ExchangeApi):
             else:
                 self.req_period = self.default_req_period       # rate with the standard rate (12 / min)
 
+        self.limit_request_rate()
+
         payload = payload or {}
         payload['request'] = '/{}/{}'.format(self.apiVersion, command)
         payload['nonce'] = self._nonce
@@ -119,8 +121,8 @@ class Bitfinex(ExchangeApi):
     @ExchangeApi.synchronized
     def _get(self, command, apiVersion=None):
         # keep the request per minute limit
-        self.log.log_error('Calling bfx api get {}'.format(command))
         self.limit_request_rate()
+        self.log.log_error('Calling bfx api get {}'.format(command))
 
         if apiVersion is None:
             apiVersion = self.apiVersion
