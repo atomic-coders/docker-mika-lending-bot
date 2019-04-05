@@ -161,7 +161,7 @@ class Bitfinex(ExchangeApi):
 
     def return_loan_orders(self, currency, limit=0):
         t = int(time.time())
-        if t - self.loanOrdersTime[currency] < 30:   # a new loan orders only all 30 secs
+        if currency in self.loanOrdersTime and t - self.loanOrdersTime[currency] < 30:   # a new loan orders only all 30 secs
             return self.loanOrders[currency]
 
         command = ('lendbook/' + currency + '?limit_asks=' + str(limit) + '&limit_bids=' + str(limit))
