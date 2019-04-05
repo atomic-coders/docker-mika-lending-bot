@@ -18,12 +18,15 @@ all_currencies = USD,BTC,BCH,ETH,XRP,IOT,XMR,LTC,OMG,ETC,EOS,DSH,ZEC,#BTG
 #Custom name of the bot, that will be displayed in html page
 label = Lending Bot
 
+# keep orders in orderbook for n cycles. After n cycles, the orderbook will be cleard.  The round-turn inbetween just takes the release funds between roundturns.
+cancelatroundturn = 3
+
 #Sleeps between active iterations, time in seconds (1-3600)
-sleeptimeactive = 60
+sleeptimeactive = 300
 
 #Sleeps between inactive iterations, time in seconds (1-3600)
 #Set to the same value as sleeptimeactive to disable
-sleeptimeinactive = 300
+sleeptimeinactive = 60
 
 #Timeout in seconds, the bot shall wait for a response during each request
 #timeout = 30
