@@ -228,6 +228,18 @@ def cancel_all():
 
 
 def lend_all():
+    global sleep_time  # We need global var to edit sleeptime
+    if gap_mode_default == "rawbtc":
+        ticker = api.return_ticker()  # Only call ticker once for all orders
+    else:
+        ticker = False
+        for cur1 in coin_cfg:
+            if "rawbtc" in cur1:
+                ticker = api.return_ticker()
+            break
+
+    cancel_all()
+
     total_lent = Data.get_total_lent()[0]
     lending_balances = api.return_available_account_balances("lending")['lending']
     if dry_run:  # just fake some numbers, if dryrun (testing)
@@ -238,17 +250,8 @@ def lend_all():
         if len(lending_balances) == 0 or cur not in lending_balances:
             MaxToLend.amount_to_lend(total_lent[cur], cur, 0, 0)
     usable_currencies = 0
-    global sleep_time  # We need global var to edit sleeptime
-    if gap_mode_default == "rawbtc":
-        ticker = api.return_ticker()  # Only call ticker once for all orders
-    else:
-        ticker = False
-        for cur1 in coin_cfg:
-            if "rawbtc" in cur1:
-                ticker = api.return_ticker()
-            break
+
     try:
-        cancel_all()
         for cur in lending_balances:
             if cur in all_currencies:
                 usable_currencies += lend_cur(cur, total_lent, lending_balances, ticker)
