@@ -44,7 +44,8 @@ frrdelta = 0.0
 
 # limit of orders to request
 loanOrdersRequestLimit = {}
-defaultLoanOrdersRequestLimit = 100
+defaultLoanOrdersRequestLimit = 200
+increaseLoanOrdersRequestLimit = 100
 
 
 def init(cfg, api1, log1, data, maxtolend, dry_run1, analysis, notify_conf1):
@@ -326,7 +327,7 @@ def get_gap_rate(active_cur, gap, order_book, cur_total_balance, raw=False):
     i = 0
     while gap_sum < gap_expected:
         if i == len(order_book['volumes']) - 1 and len(order_book['volumes']) == loanOrdersRequestLimit[active_cur]:
-            loanOrdersRequestLimit[active_cur] += defaultLoanOrdersRequestLimit
+            loanOrdersRequestLimit[active_cur] += increaseLoanOrdersRequestLimit
             log.log(active_cur + ': Not enough offers in response, adjusting request limit to ' + str(
                 loanOrdersRequestLimit[active_cur]))
             raise StopIteration
