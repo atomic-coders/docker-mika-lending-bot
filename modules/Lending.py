@@ -44,7 +44,7 @@ frrdelta = 0.0
 
 # limit of orders to request
 loanOrdersRequestLimit = {}
-defaultLoanOrdersRequestLimit = 200
+defaultLoanOrdersRequestLimit = 400
 increaseLoanOrdersRequestLimit = 100
 
 
