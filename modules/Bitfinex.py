@@ -177,7 +177,7 @@ class Bitfinex(ExchangeApi):
         https://bitfinex.readme.io/v1/reference#rest-public-ticker
         """
         t = int(time.time())
-        if t - self.tickerTime < 60:
+        if t - self.tickerTime < 300:   # a new quote only all 300 secs
             return self.ticker
 
         set_ticker_time = True
