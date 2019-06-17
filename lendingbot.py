@@ -157,6 +157,16 @@ try:
                 print "Caught {0} from exchange, ignoring.".format(ex.message)
             elif isinstance(ex, ApiError):
                 print "Caught {0} reading from exchange API, ignoring.".format(ex.message)
+            elif 'HTTPSConnectionPool' in ex.message:
+                additional_sleep = max(130.0-Lending.get_sleep_time(), 0)
+                sum_sleep = additional_sleep + Lending.get_sleep_time()
+                log.log_error('Connection issue. Wait {} seconds before retrying'.format(sum_sleep))
+                time.sleep(additional_sleep)
+            elif 'Error Calling' in ex.message:
+                additional_sleep = max(130.0-Lending.get_sleep_time(), 0)
+                sum_sleep = additional_sleep + Lending.get_sleep_time()
+                log.log_error('Connection issue (Error calling). Wait {} seconds before retrying'.format(sum_sleep))
+                time.sleep(additional_sleep)
             else:
                 print traceback.format_exc()
                 print "v{0} Unhandled error, please open a Github issue so we can fix it!".format(Data.get_bot_version())
